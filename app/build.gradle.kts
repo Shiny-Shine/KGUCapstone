@@ -47,7 +47,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Firebase dependencies(gemini api 사용을 위한 의존성)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.ai)
+
+    // Firebase Authentication dependencies(구글 로그인 기능을 사용하기 위한 의존성)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
 }

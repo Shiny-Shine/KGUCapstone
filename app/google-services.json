@@ -12,7 +12,20 @@
           "package_name": "com.KGU.kgucapstone"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "420838541423-bsqs2bacvv4a9muj27c2ve1o2h7el66k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.KGU.kgucapstone",
+            "certificate_hash": "90465e61fdac9f443633d90c409b3976f2edb715"
+          }
+        },
+        {
+          "client_id": "420838541423-u48qvits4a8do6adhn8877q7hnvrlngg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBxPYZUNYq-iK2jDDTGXU_KGxzAAF3oO14"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420838541423-u48qvits4a8do6adhn8877q7hnvrlngg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
