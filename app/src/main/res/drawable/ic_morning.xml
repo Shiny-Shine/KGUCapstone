@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 반원 태양 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,12C9.79,12 8,10.21 8,8C8,5.79 9.79,4 12,4C14.21,4 16,5.79 16,8C16,10.21 14.21,12 12,12Z" />
+    <!-- 지평선 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M4,12H20V14H4V12Z" />
+    <!-- 중앙 위 햇살 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M11,1H13V3H11V1Z" />
+    <!-- 좌상단 햇살 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M5.64,3.64L7.05,5.05L5.64,6.46L4.22,5.05L5.64,3.64Z" />
+    <!-- 우상단 햇살 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18.36,3.64L19.78,5.05L18.36,6.46L16.95,5.05L18.36,3.64Z" />
+</vector>

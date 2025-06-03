@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 초승달 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,3C5.03,3 1,7.03 1,12C1,16.97 5.03,21 10,21C11.83,21 13.55,20.5 14.95,19.64C13.31,20.5 11.4,21 9.36,21C4.38,21 0.36,16.97 0.36,12C0.36,7.03 4.38,3 9.36,3C11.4,3 13.31,3.5 14.95,4.36C13.55,3.5 11.83,3 10,3Z" />
+    <!-- Z 글자들 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,6H20V7.5H17.5L20,9.5V11H16V9.5H18.5L16,7.5V6Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,3H21V4.2H19.2L21,5.8V7H18V5.8H20.3L18,4.2V3Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M19.5,0.5H22V1.5H20.5L22,2.8V3.5H19.5V2.8H21.2L19.5,1.5V0.5Z" />
+</vector>
