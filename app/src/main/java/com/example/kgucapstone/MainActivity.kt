@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+
+import com.example.kgucapstone.HomeActivity
 
 
 // Firebase AI imports for Gemini API
@@ -69,16 +72,22 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val account = task.getResult(ApiException::class.java)!!
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                    firebaseAuthWithGoogle(account.idToken!!) // firebaseAuthWithGoogle 함수 호출
+                    firebaseAuthWithGoogle(account.idToken!!)
                 } catch (e: ApiException) {
-                    Log.w(TAG, "Google sign in failed", e)
-                    // 로그인 실패 UI 처리
-                    responseTextView.text = "Google 로그인 실패: ${e.statusCode}"
+                    Log.w(TAG, "Google 로그인이 실패했습니다.", e)
+                    Toast.makeText(
+                        this,
+                        "Google 로그인 실패: ${e.statusCode}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } else {
-                Log.w(TAG, "Google sign in cancelled or failed, resultCode: " + result.resultCode)
-                // 로그인 취소 또는 다른 이유로 실패 UI 처리
-                responseTextView.text = "Google 로그인이 취소되거나 실패했습니다."
+                Log.w(TAG, "Google 로그인이 취소되거나 실패했습니다, resultCode: " + result.resultCode)
+                Toast.makeText(
+                    this,
+                    "Google 로그인이 취소되거나 실패했습니다.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -92,10 +101,6 @@ class MainActivity : AppCompatActivity() {
         val model = Firebase.ai(backend = GenerativeBackend.googleAI())
             .generativeModel("gemini-2.0-flash")
 
-        // Provide a prompt that contains text
-        val prompt = "안녕? 나는 경기대학교에서 캡스톤디자인 프로젝트를 하고 있는 대학생이야. 너는 나의 AI 도우미야. 내가 질문하면 대답해줘."
-
-        // To generate text output, call generateContent with the text input
         lifecycleScope.launch {
             //val response = model.generateContent(prompt)
             //responseTextView.text = response.text
@@ -113,6 +118,7 @@ class MainActivity : AppCompatActivity() {
         googleSignInLauncher.launch(signInIntent)
     }
 
+    // firebaseAuthWithGoogle 함수도 수정
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -121,12 +127,32 @@ class MainActivity : AppCompatActivity() {
                     // Firebase에 로그인 성공
                     val user = auth.currentUser
                     Log.d(TAG, "Firebase signInWithCredential success, user: ${user?.displayName}")
-                    // UI 업데이트 또는 다음 액티비티로 이동
-                    // 예: findViewById<TextView>(R.id.test).text = "로그인 성공: ${user?.displayName}"
+                    // 성공 토스트 메시지
+                    Toast.makeText(
+                        this,
+                        "로그인 성공: ${user?.displayName}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    // 로그인 성공 후 HomeActivity로 이동
+                    try {
+                        val intent = Intent()
+                        intent.setClassName("com.KGU.kgucapstone", "com.example.kgucapstone.HomeActivity")
+                        startActivity(intent)
+                        finish()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "HomeActivity 이동 실패", e)
+                        Toast.makeText(this, "화면 이동 중 오류: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 } else {
                     // Firebase에 로그인 실패
                     Log.w(TAG, "Firebase signInWithCredential failure", task.exception)
-                    // UI 업데이트 (예: 에러 메시지 표시)
+                    // 실패 토스트 메시지
+                    Toast.makeText(
+                        this,
+                        "Firebase 로그인 실패: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }

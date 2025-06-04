@@ -55,4 +55,6 @@ dependencies {
     // Firebase Authentication dependencies(구글 로그인 기능을 사용하기 위한 의존성)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
+
+    implementation(libs.firebase.storage)
 }

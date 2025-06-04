@@ -18,6 +18,7 @@ firebase-ai = { module = "com.google.firebase:firebase-ai" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
