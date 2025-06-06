@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 기본 여백 -->
+    <dimen name="margin_between_elements">24dp</dimen>
+</resources>

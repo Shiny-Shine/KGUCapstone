@@ -8,35 +8,36 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- 기기 사이즈 대응을 위한 상하좌우 가이드라인 -->
+    <!-- 기기 사이즈 대응을 위한 가이드라인 (더 유연하게 조정) -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/topGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.08" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/bottomGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.92" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.08" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent="0.92" />
 
+    <!-- 앱 로고/타이틀 -->
     <TextView
         android:id="@+id/test"
         android:layout_width="wrap_content"
@@ -51,18 +52,21 @@
         app:layout_constraintVertical_bias="0.3"
         app:layout_constraintVertical_chainStyle="packed" />
 
+    <!-- 입력 필드들 (비율 기반 마진 적용) -->
     <EditText
         android:id="@+id/inputId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_between_elements"
         android:hint="아이디"
         android:inputType="text"
         android:minHeight="48dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toTopOf="@+id/inputPass"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/test"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
         android:id="@+id/inputPass"
@@ -72,42 +76,62 @@
         android:hint="비밀번호"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnNormalLogin"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/inputId" />
 
+    <!-- 로그인 버튼들 (여백 조정) -->
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnNormalLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="@android:color/holo_orange_dark"
         android:minHeight="48dp"
-        android:text="Google 로그인"
+        android:text="로그인"
+        android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/layoutRegLine"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/inputPass" />
 
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@android:color/holo_orange_dark"
+        android:minHeight="48dp"
+        android:text="Google 로그인"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/layoutRegLine"
+        app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+        app:layout_constraintStart_toStartOf="@id/leftGuideline"
+        app:layout_constraintTop_toBottomOf="@id/btnNormalLogin" />
+
+    <!-- 구분선 및 텍스트 (간격 유지를 위한 바이어스 조정) -->
     <LinearLayout
         android:id="@+id/layoutRegLine"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@+id/button2"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin">
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+        app:layout_constraintVertical_bias="0.7">
 
         <View
             android:id="@+id/lineRegister"
             android:layout_width="0dp"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_weight="2"
             android:background="@android:color/darker_gray" />
 
@@ -115,25 +139,30 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
             android:layout_weight="1"
             android:text="회원이 아니신가요?"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <View
             android:id="@+id/lineRegister2"
             android:layout_width="0dp"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_weight="2"
             android:background="@android:color/darker_gray" />
     </LinearLayout>
 
+    <!-- 회원가입 버튼 -->
     <Button
         android:id="@+id/button2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@android:color/holo_orange_dark"
+        android:minHeight="48dp"
         android:text="회원가입"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/bottomGuideline"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"

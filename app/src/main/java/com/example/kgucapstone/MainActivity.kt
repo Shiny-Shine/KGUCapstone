@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -50,12 +51,15 @@ class MainActivity : AppCompatActivity() {
 
         // UI 요소 초기화
         val responseTextView = findViewById<TextView>(R.id.test)
-        val btnLoginButton = findViewById<Button>(R.id.btnLogin) // btnLogin 버튼 ID 사용
+        val btnLoginButton = findViewById<Button>(R.id.btnLogin)
+        val btnNormalLoginButton = findViewById<Button>(R.id.btnNormalLogin)
+        val inputId = findViewById<EditText>(R.id.inputId)
+        val inputPass = findViewById<EditText>(R.id.inputPass)
 
         // Firebase Auth 인스턴스 초기화
         auth = Firebase.auth
 
-        // Firebase 콘솔에서 웹 클라이언트 ID를 가져와야 합니다.
+        // Firebase 콘솔에서 웹 클라이언트 ID 가져오기
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id)) // 중요!
             .requestEmail()
@@ -91,7 +95,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // btnLogin 버튼에 Google 로그인 기능 연결
+        // 일반 로그인 버튼 클릭 이벤트
+        btnNormalLoginButton.setOnClickListener {
+            val id = inputId.text.toString()
+            val password = inputPass.text.toString()
+
+            // 임시 계정 정보 검증
+            if (id == "kgucapstone" && password == "kgusolstice") {
+                // 로그인 성공
+                Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
+
+                // HomeActivity로 이동
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish() // 현재 액티비티 종료
+            } else {
+                // 로그인 실패
+                Toast.makeText(this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Google 로그인 버튼 클릭 이벤트
         btnLoginButton.setOnClickListener {
             signInWithGoogle()
         }

@@ -39,6 +39,9 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.createBitmap
+import com.example.kgucapstone.model.TimeSlot
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.storage.FirebaseStorage
 
 
@@ -140,25 +143,59 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         // 내 정보 버튼
+        // setupClickListeners() 함수 내부에 있는 내 정보 버튼 클릭 핸들러 수정
         findViewById<Button>(R.id.btn_my_info).setOnClickListener {
-            showToast("내 정보")
+            // 내 정보 화면으로 이동
+            val intent = Intent(this, UserProfileActivity::class.java)
+
+            // 현재 사용자 정보 확인
+            val currentUser = FirebaseAuth.getInstance().currentUser
+
+            if (currentUser != null) {
+                // Firebase 인증 제공자 확인
+                val providerData = currentUser.providerData
+                var loginType = "일반 로그인"
+
+                for (profile in providerData) {
+                    if (profile.providerId == GoogleAuthProvider.PROVIDER_ID) {
+                        loginType = "Google 로그인"
+                        break
+                    }
+                }
+
+                intent.putExtra("LOGIN_TYPE", loginType)
+            } else {
+                // Firebase 로그인이 아닌 경우, 일반 로그인으로 간주
+                intent.putExtra("USERNAME", "kgucapstone")
+                intent.putExtra("LOGIN_TYPE", "일반 로그인")
+            }
+
+            startActivity(intent)
         }
 
         // 식사 시간 버튼들
         findViewById<LinearLayout>(R.id.btn_morning).setOnClickListener {
-            showToast("아침 복용")
+            val intent = Intent(this, MedicationTimeActivity::class.java)
+            intent.putExtra("TIME_SLOT", TimeSlot.MORNING.ordinal)
+            startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.btn_lunch).setOnClickListener {
-            showToast("점심 복용")
+            val intent = Intent(this, MedicationTimeActivity::class.java)
+            intent.putExtra("TIME_SLOT", TimeSlot.LUNCH.ordinal)
+            startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.btn_evening).setOnClickListener {
-            showToast("저녁 복용")
+            val intent = Intent(this, MedicationTimeActivity::class.java)
+            intent.putExtra("TIME_SLOT", TimeSlot.EVENING.ordinal)
+            startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.btn_bedtime).setOnClickListener {
-            showToast("취침 전 복용")
+            val intent = Intent(this, MedicationTimeActivity::class.java)
+            intent.putExtra("TIME_SLOT", TimeSlot.BEDTIME.ordinal)
+            startActivity(intent)
         }
 
         // 내 복용 기록 버튼

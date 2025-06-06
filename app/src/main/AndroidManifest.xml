@@ -43,6 +43,17 @@
             android:name="com.example.kgucapstone.MedicineAnalysisResultActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".UserProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MedicationTimeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AddMedicationActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
