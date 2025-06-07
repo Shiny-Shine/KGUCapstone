@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#FDFDFD"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tv_add_medication_title"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -25,10 +25,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_save_medication"
+        app:layout_constraintBottom_toTopOf="@+id/btn_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_add_medication_title">
+        app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,38 +38,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="약 이름"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/et_medication_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@android:drawable/edit_text"
-                android:hint="약 이름을 입력하세요"
+                android:layout_marginTop="8dp"
+                android:hint="예: 타이레놀"
                 android:inputType="text"
-                android:padding="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="복용량"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/et_medication_dosage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@android:drawable/edit_text"
-                android:hint="예: 1회 1정"
-                android:inputType="text"
-                android:padding="12dp" />
+                android:minHeight="48dp"
+                android:padding="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -77,103 +60,86 @@
                 android:layout_marginTop="16dp"
                 android:text="약 설명"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/et_medication_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@android:drawable/edit_text"
-                android:gravity="top"
-                android:hint="약에 대한 설명을 입력하세요"
+                android:layout_marginTop="8dp"
+                android:hint="예: 두통 및 근육통 완화"
                 android:inputType="textMultiLine"
-                android:lines="3"
-                android:padding="12dp" />
+                android:minHeight="48dp"
+                android:padding="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="복용 시간"
+                android:text="복용량"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/et_medication_dosage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/cb_morning"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="아침" />
-
-                <CheckBox
-                    android:id="@+id/cb_lunch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="점심" />
-
-                <CheckBox
-                    android:id="@+id/cb_evening"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="저녁" />
-
-                <CheckBox
-                    android:id="@+id/cb_bedtime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="취침 전" />
-
-            </LinearLayout>
+                android:hint="예: 1회 1정"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:padding="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="복용 시작일"
+                android:layout_marginTop="24dp"
+                android:text="복용 시간"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btn_start_date"
+            <CheckBox
+                android:id="@+id/cb_morning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:backgroundTint="@android:color/darker_gray"
-                android:text="시작일 선택"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="복용 종료일 (선택사항)"
-                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:text="아침"
                 android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/btn_end_date"
+            <CheckBox
+                android:id="@+id/cb_lunch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:backgroundTint="@android:color/darker_gray"
-                android:text="종료일 선택"
-                android:textColor="@color/black" />
+                android:text="점심"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/cb_evening"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="저녁"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/cb_bedtime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="취침 전"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </ScrollView>
 
     <Button
-        android:id="@+id/btn_save_medication"
+        android:id="@+id/btn_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@android:color/holo_orange_dark"
-        android:text="저장하기"
+        android:text="저장"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
@@ -184,13 +150,23 @@
         android:id="@+id/btn_cancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@android:color/darker_gray"
-        android:text="취소하기"
+        android:text="취소"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
