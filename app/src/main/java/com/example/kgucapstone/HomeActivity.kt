@@ -37,8 +37,10 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.createBitmap
+import com.example.kgucapstone.model.MedicationManager
 import com.example.kgucapstone.model.TimeSlot
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -54,6 +56,23 @@ class HomeActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "HomeActivity"
+        private const val REQUEST_CODE_MORNING = 1001
+        private const val REQUEST_CODE_LUNCH = 1002
+        private const val REQUEST_CODE_EVENING = 1003
+        private const val REQUEST_CODE_BEDTIME = 1004
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateTimeSlotCompletionStatus()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            // 다른 액티비티에서 데이터가 변경되었을 수 있으므로 상태 업데이트
+            updateTimeSlotCompletionStatus()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,29 +192,47 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // 식사 시간 버튼들
+        // 시간 버튼들
+        // HomeActivity.kt의 시간대 버튼 클릭 리스너
         findViewById<LinearLayout>(R.id.btn_morning).setOnClickListener {
             val intent = Intent(this, MedicationTimeActivity::class.java)
             intent.putExtra("TIME_SLOT", TimeSlot.MORNING.ordinal)
-            startActivity(intent)
+
+            // FirebaseAuth나 SharedPreferences에서 현재 사용자 ID 가져오기
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+
+            intent.putExtra("USER_ID", userId)
+            startActivityForResult(intent, REQUEST_CODE_MORNING)
         }
 
         findViewById<LinearLayout>(R.id.btn_lunch).setOnClickListener {
             val intent = Intent(this, MedicationTimeActivity::class.java)
             intent.putExtra("TIME_SLOT", TimeSlot.LUNCH.ordinal)
-            startActivity(intent)
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+
+            intent.putExtra("USER_ID", userId)
+            startActivityForResult(intent, REQUEST_CODE_LUNCH)
         }
 
         findViewById<LinearLayout>(R.id.btn_evening).setOnClickListener {
             val intent = Intent(this, MedicationTimeActivity::class.java)
             intent.putExtra("TIME_SLOT", TimeSlot.EVENING.ordinal)
-            startActivity(intent)
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+
+            intent.putExtra("USER_ID", userId)
+            startActivityForResult(intent, REQUEST_CODE_EVENING)
         }
 
         findViewById<LinearLayout>(R.id.btn_bedtime).setOnClickListener {
             val intent = Intent(this, MedicationTimeActivity::class.java)
             intent.putExtra("TIME_SLOT", TimeSlot.BEDTIME.ordinal)
-            startActivity(intent)
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+
+            intent.putExtra("USER_ID", userId)
+            startActivityForResult(intent, REQUEST_CODE_BEDTIME)
         }
 
         // 내 복용 기록 버튼
@@ -227,6 +264,11 @@ class HomeActivity : AppCompatActivity() {
                     1001
                 )
             }
+        }
+
+        // 알람 설정 버튼
+        findViewById<Button>(R.id.btn_alarm_settings).setOnClickListener {
+            showAlarmSettingsDialog()
         }
     }
 
@@ -592,5 +634,105 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    // 알람 설정 다이얼로그 표시 함수
+    private fun showAlarmSettingsDialog() {
+        val timeSlots = TimeSlot.values()
+        val timeSlotNames = arrayOf("아침", "점심", "저녁", "취침 전")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("알람 시간 설정")
+
+        // 시간대 선택 목록
+        builder.setItems(timeSlotNames) { _, which ->
+            val selectedTimeSlot = timeSlots[which]
+            showTimePickerDialog(selectedTimeSlot)
+        }
+
+        builder.setNegativeButton("취소", null)
+        builder.show()
+    }
+
+    // 시간 선택 다이얼로그
+    private fun showTimePickerDialog(timeSlot: TimeSlot) {
+        val (currentHour, currentMinute) = MedicationManager.getAlarmTime(timeSlot)
+
+        val timePickerDialog = android.app.TimePickerDialog(
+            this,
+            { _, hourOfDay, minute ->
+                // 선택한 시간으로 알람 설정
+                MedicationManager.setAlarmTime(timeSlot, hourOfDay, minute)
+
+                // 사용자 ID 가져오기
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+
+                // 알람 설정
+                MedicationManager.setAlarmForTimeSlot(this, timeSlot, userId)
+
+                // 알람 설정 메시지
+                val timeSlotText = when (timeSlot) {
+                    TimeSlot.MORNING -> "아침"
+                    TimeSlot.LUNCH -> "점심"
+                    TimeSlot.EVENING -> "저녁"
+                    TimeSlot.BEDTIME -> "취침 전"
+                }
+
+                Toast.makeText(
+                    this,
+                    "${timeSlotText} 알람이 ${hourOfDay}시 ${minute}분으로 설정되었습니다.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
+            currentHour,
+            currentMinute,
+            true // 24시간 형식
+        )
+
+        timePickerDialog.show()
+    }
+
+    private fun updateTimeSlotCompletionStatus() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "current_user_id"
+        val today = Date()
+
+        // 각 시간대별 복용 완료 상태 확인
+        for (timeSlot in TimeSlot.values()) {
+            val medications = MedicationManager.getMedicationsForTimeSlot(timeSlot, userId)
+
+            // 해당 시간대에 약이 있는 경우에만 확인
+            if (medications.isNotEmpty()) {
+                val records = MedicationManager.getMedicationRecordsForUserDateAndSlot(userId, today, timeSlot)
+
+                // 모든 약이 복용 완료되었는지 확인
+                val allTaken = records.isNotEmpty() && records.all { it.taken }
+
+                // 이미지뷰 업데이트
+                updateTimeSlotIcon(timeSlot, allTaken)
+            }
+        }
+    }
+
+    private fun updateTimeSlotIcon(timeSlot: TimeSlot, completed: Boolean) {
+        val imageView = when (timeSlot) {
+            TimeSlot.MORNING -> findViewById<ImageView>(R.id.iv_morning_status)
+            TimeSlot.LUNCH -> findViewById<ImageView>(R.id.iv_lunch_status)
+            TimeSlot.EVENING -> findViewById<ImageView>(R.id.iv_evening_status)
+            TimeSlot.BEDTIME -> findViewById<ImageView>(R.id.iv_bedtime_status)
+        }
+
+        // 복용 완료된 경우 체크 아이콘으로 변경
+        if (completed) {
+            imageView.setImageResource(R.drawable.ic_check_circle)
+        } else {
+            // 기존 이미지 유지 또는 기본 이미지로 설정
+            val defaultIcon = when (timeSlot) {
+                TimeSlot.MORNING -> R.drawable.sunrise
+                TimeSlot.LUNCH -> R.drawable.day
+                TimeSlot.EVENING -> R.drawable.moon
+                TimeSlot.BEDTIME -> R.drawable.midnight
+            }
+            imageView.setImageResource(defaultIcon)
+        }
     }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="약품 정보 입력"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/et_medicine_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="약품 이름"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_medicine_dosage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="용법 용량"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_medicine_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="약품 설명"
+        android:inputType="textMultiLine"
+        android:lines="4"
+        android:gravity="top" />
+</LinearLayout>

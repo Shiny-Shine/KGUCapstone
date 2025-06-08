@@ -25,11 +25,11 @@ data class Medication(
 )
 
 data class MedicationRecord(
-    val id: String = "",
-    val medicationId: String = "",
-    val userId: String = "",
-    val timeSlot: TimeSlot = TimeSlot.MORNING,
-    val date: Date = Date(),
+    val id: String,
+    val medicationId: String,
+    val timeSlot: TimeSlot,
+    val date: Date,
     val taken: Boolean = false,
-    val takenTime: Date? = null
+    val takenTime: Date? = null,
+    val userId: String
 )

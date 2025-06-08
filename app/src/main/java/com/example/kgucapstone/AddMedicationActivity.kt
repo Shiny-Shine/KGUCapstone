@@ -1,169 +1,190 @@
 package com.example.kgucapstone
 
-import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kgucapstone.model.Medication
+import com.example.kgucapstone.model.MedicationManager
 import com.example.kgucapstone.model.TimeSlot
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 import java.util.UUID
 
 class AddMedicationActivity : AppCompatActivity() {
 
     private lateinit var nameEditText: EditText
-    private lateinit var dosageEditText: EditText
     private lateinit var descriptionEditText: EditText
+    private lateinit var dosageEditText: EditText
+
     private lateinit var morningCheckBox: CheckBox
     private lateinit var lunchCheckBox: CheckBox
     private lateinit var eveningCheckBox: CheckBox
     private lateinit var bedtimeCheckBox: CheckBox
-    private lateinit var startDateButton: Button
-    private lateinit var endDateButton: Button
 
-    private var startDate: Date = Date()
-    private var endDate: Date? = null
-    private val calendar = Calendar.getInstance()
-    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+    private var selectedTimeSlot: TimeSlot? = null
+    private lateinit var userId: String
+    private var matchedMedicationId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_medication)
 
-        // UI 초기화
+        // UI 요소 초기화
         nameEditText = findViewById(R.id.et_medication_name)
-        dosageEditText = findViewById(R.id.et_medication_dosage)
         descriptionEditText = findViewById(R.id.et_medication_description)
+        dosageEditText = findViewById(R.id.et_medication_dosage)
+
         morningCheckBox = findViewById(R.id.cb_morning)
         lunchCheckBox = findViewById(R.id.cb_lunch)
         eveningCheckBox = findViewById(R.id.cb_evening)
         bedtimeCheckBox = findViewById(R.id.cb_bedtime)
-        startDateButton = findViewById(R.id.btn_start_date)
-        endDateButton = findViewById(R.id.btn_end_date)
 
-        // 특정 시간대가 선택되었다면 해당 체크박스 선택
-        val selectedTimeSlot = intent.getIntExtra("TIME_SLOT", -1)
-        if (selectedTimeSlot != -1) {
-            when (TimeSlot.fromOrdinal(selectedTimeSlot)) {
-                TimeSlot.MORNING -> morningCheckBox.isChecked = true
-                TimeSlot.LUNCH -> lunchCheckBox.isChecked = true
-                TimeSlot.EVENING -> eveningCheckBox.isChecked = true
-                TimeSlot.BEDTIME -> bedtimeCheckBox.isChecked = true
-            }
+        val saveButton = findViewById<Button>(R.id.btn_save_medication)
+        val cancelButton = findViewById<Button>(R.id.btn_cancel)
+
+        // 인텐트에서 데이터 가져오기
+        selectedTimeSlot = TimeSlot.fromOrdinal(intent.getIntExtra("TIME_SLOT", 0))
+        userId = intent.getStringExtra("USER_ID") ?: "current_user_id"
+
+        // 분석된 약품 정보가 있으면 불러오기
+        val medicineName = intent.getStringExtra("MEDICINE_NAME")
+        val medicineDescription = intent.getStringExtra("MEDICINE_DESCRIPTION")
+
+        // 매칭된 약품 정보가 있으면 불러오기
+        matchedMedicationId = intent.getStringExtra("MATCHED_MEDICINE_ID")
+        val matchedMedicineName = intent.getStringExtra("MATCHED_MEDICINE_NAME")
+        val matchedMedicineDescription = intent.getStringExtra("MATCHED_MEDICINE_DESCRIPTION")
+        val matchedMedicineDosage = intent.getStringExtra("MATCHED_MEDICINE_DOSAGE")
+
+        Log.d("AddMedicationActivity", "매칭된 약품 ID: $matchedMedicationId")
+        Log.d("AddMedicationActivity", "매칭된 약품 이름: $matchedMedicineName")
+
+        // 매칭된 약품 정보가 있으면 우선적으로 사용
+        if (!matchedMedicationId.isNullOrEmpty() && !matchedMedicineName.isNullOrEmpty()) {
+            nameEditText.setText(matchedMedicineName)
+            descriptionEditText.setText(matchedMedicineDescription)
+            dosageEditText.setText(matchedMedicineDosage)
+        }
+        // 아니면 분석된 정보 사용
+        else if (!medicineName.isNullOrEmpty()) {
+            nameEditText.setText(medicineName)
+            descriptionEditText.setText(medicineDescription)
         }
 
-        // 시작일 버튼 설정
-        startDateButton.text = dateFormat.format(startDate)
-        startDateButton.setOnClickListener {
-            showDatePicker(true)
+        // 미리 선택된 시간대 체크
+        when (selectedTimeSlot) {
+            TimeSlot.MORNING -> morningCheckBox.isChecked = true
+            TimeSlot.LUNCH -> lunchCheckBox.isChecked = true
+            TimeSlot.EVENING -> eveningCheckBox.isChecked = true
+            TimeSlot.BEDTIME -> bedtimeCheckBox.isChecked = true
+            null -> TODO()
         }
 
-        // 종료일 버튼 설정
-        endDateButton.text = "종료일 선택 (선택사항)"
-        endDateButton.setOnClickListener {
-            showDatePicker(false)
-        }
-
-        // 저장 버튼 클릭 리스너
-        findViewById<Button>(R.id.btn_save_medication).setOnClickListener {
+        // 저장 버튼 클릭 이벤트
+        saveButton.setOnClickListener {
             saveMedication()
         }
 
-        // 취소 버튼 클릭 리스너
-        findViewById<Button>(R.id.btn_cancel).setOnClickListener {
+        // 취소 버튼 클릭 이벤트
+        cancelButton.setOnClickListener {
+            setResult(RESULT_CANCELED)
             finish()
+        }
+
+        // 샘플 약품을 가져오지 못한 경우 자동으로 데이터베이스 검색
+        if (matchedMedicationId.isNullOrEmpty() && !medicineName.isNullOrEmpty()) {
+            searchMedicationInDatabase(medicineName)
         }
     }
 
-    private fun showDatePicker(isStartDate: Boolean) {
-        val currentDate = if (isStartDate) startDate else (endDate ?: Date())
-        calendar.time = currentDate
+    private fun searchMedicationInDatabase(medicineName: String) {
+        // 샘플 데이터에서 약 이름으로 검색
+        val allMedications = MedicationManager.getMedicationsForUser("common_medicines")
 
-        DatePickerDialog(
-            this,
-            { _, year, month, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        // 정확히 일치하는 약품 찾기
+        val exactMatch = allMedications.find {
+            it.name.equals(medicineName, ignoreCase = true)
+        }
 
-                val selectedDate = calendar.time
+        // 부분 일치하는 약품 찾기
+        val partialMatch = allMedications.find { medication ->
+            medication.name.contains(medicineName, ignoreCase = true) ||
+                    medicineName.contains(medication.name, ignoreCase = true)
+        }
 
-                if (isStartDate) {
-                    startDate = selectedDate
-                    startDateButton.text = dateFormat.format(startDate)
+        val matchedMedication = exactMatch ?: partialMatch
 
-                    // 종료일이 시작일보다 빠르면 종료일도 변경
-                    if (endDate != null && endDate!! < startDate) {
-                        endDate = null
-                        endDateButton.text = "종료일 선택 (선택사항)"
-                    }
-                } else {
-                    // 종료일이 시작일보다 빠르면 경고
-                    if (selectedDate < startDate) {
-                        Toast.makeText(this, "종료일은 시작일 이후여야 합니다", Toast.LENGTH_SHORT).show()
-                    } else {
-                        endDate = selectedDate
-                        endDateButton.text = dateFormat.format(endDate!!)
-                    }
-                }
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        if (matchedMedication != null) {
+            // 찾은 약품 정보로 화면 업데이트
+            nameEditText.setText(matchedMedication.name)
+            descriptionEditText.setText(matchedMedication.description)
+            dosageEditText.setText(matchedMedication.dosage)
+
+            matchedMedicationId = matchedMedication.id
+
+            Toast.makeText(
+                this,
+                "기존 데이터베이스에서 '${matchedMedication.name}' 약품을 찾았습니다.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun saveMedication() {
         val name = nameEditText.text.toString().trim()
-        val dosage = dosageEditText.text.toString().trim()
         val description = descriptionEditText.text.toString().trim()
+        val dosage = dosageEditText.text.toString().trim()
 
-        // 유효성 검사
+        // 입력 검증
         if (name.isEmpty()) {
             Toast.makeText(this, "약 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (dosage.isEmpty()) {
-            Toast.makeText(this, "복용량을 입력해주세요", Toast.LENGTH_SHORT).show()
+        // 선택된 시간대 목록 생성
+        val selectedTimeSlots = mutableListOf<TimeSlot>()
+        if (morningCheckBox.isChecked) selectedTimeSlots.add(TimeSlot.MORNING)
+        if (lunchCheckBox.isChecked) selectedTimeSlots.add(TimeSlot.LUNCH)
+        if (eveningCheckBox.isChecked) selectedTimeSlots.add(TimeSlot.EVENING)
+        if (bedtimeCheckBox.isChecked) selectedTimeSlots.add(TimeSlot.BEDTIME)
+
+        if (selectedTimeSlots.isEmpty()) {
+            Toast.makeText(this, "적어도 하나의 시간대를 선택해주세요", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // 선택된 시간대 확인
-        val timeSlots = mutableListOf<TimeSlot>()
-        if (morningCheckBox.isChecked) timeSlots.add(TimeSlot.MORNING)
-        if (lunchCheckBox.isChecked) timeSlots.add(TimeSlot.LUNCH)
-        if (eveningCheckBox.isChecked) timeSlots.add(TimeSlot.EVENING)
-        if (bedtimeCheckBox.isChecked) timeSlots.add(TimeSlot.BEDTIME)
-
-        if (timeSlots.isEmpty()) {
-            Toast.makeText(this, "적어도 하나의 복용 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
+        // 약품 ID 생성 (매칭된 약품이 있으면 해당 ID 사용)
+        val medicationId = if (matchedMedicationId != null) {
+            // 매칭된 약품 ID + 사용자 ID로 복제
+            "${matchedMedicationId}_${userId}"
+        } else {
+            // 새 ID 생성
+            "med_${UUID.randomUUID().toString().substring(0, 8)}"
         }
 
-        // 약 객체 생성
+        // 약품 객체 생성
         val medication = Medication(
-            id = UUID.randomUUID().toString(),
+            id = medicationId,
             name = name,
             description = description,
             dosage = dosage,
-            timesPerDay = timeSlots.size,
-            timeSlots = timeSlots,
-            startDate = startDate,
-            endDate = endDate,
-            userId = "current_user_id" // 실제 앱에서는 로그인한 사용자 ID 사용
+            timesPerDay = selectedTimeSlots.size,
+            timeSlots = selectedTimeSlots,
+            startDate = Date(),
+            userId = userId
         )
 
-        // 여기서 실제로 데이터베이스에 저장해야 합니다.
-        // 예: Firebase Firestore나 Room 데이터베이스에 저장
+        // 데이터베이스에 저장
+        MedicationManager.addMedication(medication)
+
+        Log.d("AddMedicationActivity", "약품 저장됨: $name, 시간대: ${selectedTimeSlots.joinToString()}")
 
         Toast.makeText(this, "약이 추가되었습니다", Toast.LENGTH_SHORT).show()
+        setResult(RESULT_OK)
         finish()
     }
 }
