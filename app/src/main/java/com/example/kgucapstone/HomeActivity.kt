@@ -237,7 +237,8 @@ class HomeActivity : AppCompatActivity() {
 
         // 내 복용 기록 버튼
         findViewById<Button>(R.id.btn_medication_record).setOnClickListener {
-            showToast("내 복용 기록")
+            val intent = Intent(this, MedicationRecordActivity::class.java)
+            startActivity(intent)
         }
 
         // 카메라 버튼

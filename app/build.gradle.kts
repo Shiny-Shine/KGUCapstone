@@ -37,7 +37,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -58,4 +57,6 @@ dependencies {
     implementation(libs.play.services.auth)
 
     implementation(libs.firebase.storage)
+
+
 }
