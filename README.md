@@ -1,4 +1,4 @@
-![20250604_085938](https://github.com/user-attachments/assets/f6124040-bb97-4a0a-b6af-45725521e352)
+<img src="https://github.com/user-attachments/assets/f6124040-bb97-4a0a-b6af-45725521e352" width="300"/>
 
 
 # 💊 복용이 (Dosing)
