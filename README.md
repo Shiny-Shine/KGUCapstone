@@ -56,6 +56,18 @@
 
 <br>
 
+## 🛠️ 기술 스택 (Tech Stack)
+
+| 분류 | 기술 | 설명 |
+| :--- | :--- | :--- |
+| **Mobile** | ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white) | 안드로이드 네이티브 앱 개발 |
+| **AI / ML** | ![OpenAI](https://img.shields.io/badge/Gemini-8E75B2?style=flat&logo=googlegemini&logoColor=white) | 사용자 음성 인식 및 텍스트 변환 (STT) |
+| **AI / Vision** | ![OCR](https://img.shields.io/badge/OCR_&_Vision-FF9900?style=flat) | 약품 사진 텍스트 추출 및 이미지 분석 |
+| **Database** | ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=white) | 사용자 복약 기록, 증상 데이터, 의약품 정보 저장 |
+| **Design** | ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white) | 고령자 맞춤형 UI/UX 설계 |
+
+<br>
+
 ## 📱 시스템 흐름도 (System Flow)
 1.  **사용자 입력:** 카메라 촬영 (약 사진) 또는 음성 질문
 2.  **AI 분석:** OCR로 텍스트 추출 및 이미지를 분석, 음성을 텍스트화
@@ -66,7 +78,7 @@
 <br>
 
 ## 👥 팀 정보 (Team Solstice)
-**경기대학교 AI컴퓨터공학부 / 소프트웨어중심대학사업단**
+**경기대학교 AI컴퓨터공학부**
 
 * **지도교수:** 나관상
 * **팀원:** 김유, 김준호, 신민철, 박준영, 엄지영, 박정은
